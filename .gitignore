@@ -10,6 +10,22 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Secret files
+.env
+*.env
+backend/.env
+
+# Local logs/debug files
+*.txt
+*.log
+force_push_err.txt
+git_err_log.txt
+push_debug.txt
+git_push_debug.txt
+git_error.txt
+git_err.txt
+push_res.txt
+
 *.local
 
 # Editor directories and files
