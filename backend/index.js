@@ -13,14 +13,22 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 
-// Database Sync and Server Start
+// Database Sync
 sequelize.sync({ force: false })
     .then(() => {
         console.log('Database synced successfully');
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
     })
     .catch((err) => {
         console.error('Error syncing database:', err);
     });
+
+// Server Start (for local development only)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+// Export app for Vercel
+module.exports = app;
+
