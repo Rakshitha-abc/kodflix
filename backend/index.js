@@ -13,6 +13,16 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 
+// Health Check
+app.get('/api/health', async (req, res) => {
+    try {
+        await sequelize.authenticate();
+        res.json({ status: 'ok', database: 'connected' });
+    } catch (err) {
+        res.status(500).json({ status: 'error', database: err.message });
+    }
+});
+
 // Database Sync
 sequelize.sync({ force: false })
     .then(() => {
