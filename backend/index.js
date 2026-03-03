@@ -13,24 +13,34 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 
+// Database Sync (Non-blocking)
+const initDb = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Database connected.');
+        await sequelize.sync({ force: false });
+        console.log('Database synced.');
+    } catch (err) {
+        console.error('Database initialization failed:', err.message);
+    }
+};
+
+initDb();
+
+// Root route to check if server is alive
+app.get('/api', (req, res) => {
+    res.json({ message: 'Kodflix API is running' });
+});
+
 // Health Check
 app.get('/api/health', async (req, res) => {
     try {
         await sequelize.authenticate();
         res.json({ status: 'ok', database: 'connected' });
     } catch (err) {
-        res.status(500).json({ status: 'error', database: err.message });
+        res.status(500).json({ status: 'error', message: 'Database unreachable', error: err.message });
     }
 });
-
-// Database Sync
-sequelize.sync({ force: false })
-    .then(() => {
-        console.log('Database synced successfully');
-    })
-    .catch((err) => {
-        console.error('Error syncing database:', err);
-    });
 
 // Server Start (for local development only)
 if (require.main === module) {

@@ -1,7 +1,11 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const sequelize = new Sequelize(process.env.DB_URL, {
+if (!process.env.DB_URL) {
+    console.warn('WARNING: DB_URL is not defined in environment variables.');
+}
+
+const sequelize = new Sequelize(process.env.DB_URL || 'mysql://localhost/test', {
     dialect: 'mysql',
     logging: false,
     dialectOptions: {
@@ -12,3 +16,4 @@ const sequelize = new Sequelize(process.env.DB_URL, {
 });
 
 module.exports = sequelize;
+
