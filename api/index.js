@@ -5,8 +5,6 @@ const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
 app.use(cors());
 app.use(express.json());
 
@@ -27,9 +25,9 @@ const initDb = async () => {
 
 initDb();
 
-// Root route to check if server is alive
-app.get('/api', (req, res) => {
-    res.json({ message: 'Kodflix API is running - Final Standard Version' });
+// Diagnostic Routes
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is responding!', time: new Date().toISOString() });
 });
 
 // Health Check
@@ -38,9 +36,8 @@ app.get('/api/health', async (req, res) => {
         await sequelize.authenticate();
         res.json({ status: 'ok', database: 'connected' });
     } catch (err) {
-        res.status(500).json({ status: 'error', message: 'Database unreachable', error: err.message });
+        res.status(500).json({ status: 'error', database: 'failed', error: err.message });
     }
 });
 
-// Export app for Vercel
 module.exports = app;
