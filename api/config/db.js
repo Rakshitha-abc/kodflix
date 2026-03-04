@@ -1,4 +1,6 @@
 const { Sequelize } = require('sequelize');
+// Explicitly require mysql2 to assist Vercel's bundler
+require('mysql2');
 require('dotenv').config();
 
 const dbUrl = process.env.DB_URL;
