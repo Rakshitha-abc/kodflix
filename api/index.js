@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-// const sequelize = require('./config/db.cjs');
-// const authRoutes = require('./routes/authRoutes.cjs');
+const sequelize = require('./config/db');
+const authRoutes = require('./routes/authRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -16,7 +16,10 @@ app.use('/api/auth', authRoutes);
 // Database Sync (Non-blocking)
 const initDb = async () => {
     try {
-        console.log('DB init skipped for test.');
+        await sequelize.authenticate();
+        console.log('Database connected.');
+        await sequelize.sync({ force: false });
+        console.log('Database synced.');
     } catch (err) {
         console.error('Database initialization failed:', err.message);
     }
@@ -26,25 +29,18 @@ initDb();
 
 // Root route to check if server is alive
 app.get('/api', (req, res) => {
-    res.json({ message: 'Kodflix API is running - Simple Version' });
+    res.json({ message: 'Kodflix API is running - Final Standard Version' });
 });
 
 // Health Check
 app.get('/api/health', async (req, res) => {
     try {
-        res.json({ status: 'ok', server: 'alive', db: 'skipped' });
+        await sequelize.authenticate();
+        res.json({ status: 'ok', database: 'connected' });
     } catch (err) {
-        res.status(500).json({ status: 'error', message: 'Logic error' });
+        res.status(500).json({ status: 'error', message: 'Database unreachable', error: err.message });
     }
 });
 
-// Server Start (for local development only)
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
-}
-
 // Export app for Vercel
 module.exports = app;
-
